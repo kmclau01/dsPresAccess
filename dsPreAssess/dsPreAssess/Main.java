@@ -3,7 +3,8 @@ package dsPreAssess;
 public class Main {
 	
 	public static void main(String args[]) {
-		System.out.printf("Hello World!\n");
+		Driver a = new Driver("orders.txt");
+		a.showOrders();
 	}
 	
 }
