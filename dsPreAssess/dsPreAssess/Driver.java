@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Driver implements OrderDB{
-	private String[][]orders;
+	private Order[] orders;
 	
 	public Driver() {
 		
@@ -14,11 +14,12 @@ public class Driver implements OrderDB{
 	
 	public Driver(String fileName) {
 		loadOrders(fileName);
+		orders = new Order[25];
 	}
 	
 	private void readFile(String fileName) throws IOException{
 		String line;
-		ArrayList<String[]> list = new ArrayList<>();
+		int index = 0;
 		BufferedReader file = new BufferedReader(new FileReader(fileName));
 		
 		//waste top line
@@ -26,26 +27,21 @@ public class Driver implements OrderDB{
 		
 		while((line = file.readLine()) != null) {
 			String[] elem = line.split(",");
-			list.add(elem);
-			//added deliniated string array to list
-		}
-		
-		//make array as big as list
-		String[][] orders = new String[list.size()][list.get(0).length];
-		
-		//fill array
-		for(int i = 0; i < orders.length; i++) {
-			for(int j = 0; j < orders[0].length;j++) {
-				orders[i][j] = list.get(i)[j];
+			
+			if(index >= orders.length) {
+				resize();
 			}
+			
+			orders[index] = new Order(elem[0],elem[1],elem[2],elem[3],elem[4]);
+			index++;
+			
 		}
+		
 		file.close();
-		//save array to object
-		this.orders = orders;
 	}
 	
-	@Override
-	public void loadOrders(String fileName) {
+	
+	public int loadOrders(String fileName) {
 		//screw this method for not letting IOExceptions
 		try {
 			readFile(fileName);
@@ -55,19 +51,91 @@ public class Driver implements OrderDB{
 			e.printStackTrace();
 		}
 		
-		
+		return 0;
 	}
 
-	@Override
+	
 	public void showOrders() {
 		//print format, %-# means allot # spaces and put a string in it.
 		System.out.printf("%-8s %-30s %10s%n","Order ID", "Product", "Total Amt");
 		System.out.printf("%-8s %-30s %10s%n","--------", "-------", "---------");
 				
 		for (int i = 0; i < orders.length; i++) {
-				System.out.printf("%-8s %-30s %10s%n",this.orders[i][0], this.orders[i][2], this.orders[i][3]);
+				//System.out.printf("%-8s %-30s %10s%n",this.orders[i][0], this.orders[i][2], this.orders[i][3]);
 				
 				}
+		
+	}
+
+	@Override
+	public int saveOrders(String fileName) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean add(Order order) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void add(int index, Order order) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Order get(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int searchByOrderID(int orderID) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Order remove(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Order set(int index, Order order) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int capacity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void resize() {
+		Order[] ordersNew = new Order[this.orders.length + 25];
+		
+		for(int i = 0; i < this.orders.length; i++) {
+			ordersNew[i] = this.orders[i];
+		}
+		
+		this.orders = ordersNew;
 		
 	}
 
