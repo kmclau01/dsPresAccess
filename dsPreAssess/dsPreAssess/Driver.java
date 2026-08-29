@@ -1,25 +1,26 @@
 package dsPreAssess;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Driver implements OrderDB{
 	private Order[] orders;
-	
+	private int index;
 	public Driver() {
 		
 	}
 	
 	public Driver(String fileName) {
+		this.orders = new Order[25];
 		loadOrders(fileName);
-		orders = new Order[25];
 	}
 	
 	private void readFile(String fileName) throws IOException{
 		String line;
-		int index = 0;
+		this.index = 0;
 		BufferedReader file = new BufferedReader(new FileReader(fileName));
 		
 		//waste top line
@@ -28,103 +29,157 @@ public class Driver implements OrderDB{
 		while((line = file.readLine()) != null) {
 			String[] elem = line.split(",");
 			
-			if(index >= orders.length) {
+			if(this.index >= this.orders.length) {
 				resize();
 			}
 			
-			orders[index] = new Order(elem[0],elem[1],elem[2],elem[3],elem[4]);
-			index++;
+			this.orders[this.index] = new Order(elem[0],elem[1],elem[2],elem[3],elem[4]);
+			this.index++;
 			
 		}
 		
 		file.close();
 	}
 	
+	private void writeFile( String fileName) throws IOException{
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+			writer.write("Order_ID,Customer_Name,Product,Total_Amount,Order_Date");
+			writer.newLine();
+		if(this.index != 0) {
+			for(int i = 0; i <= this.index; i++) {
+				writer.write(this.orders[i].id()+","+this.orders[i].name()+","+this.orders[i].product()+","+this.orders[i].amount()+","+this.orders[i].date());
+				writer.newLine();
+			}
+		}
+		else {
+			System.out.println("No orders to save!");
+		}
+		
+		writer.close();
+	}
+	
 	
 	public int loadOrders(String fileName) {
 		//screw this method for not letting IOExceptions
+		System.out.println("Loading Orders ...");
 		try {
-			readFile(fileName);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			readFile(fileName);	
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		return 0;
+		return this.index;
 	}
 
 	
 	public void showOrders() {
 		//print format, %-# means allot # spaces and put a string in it.
+		System.out.println("Showing Orders ...");
 		System.out.printf("%-8s %-30s %10s%n","Order ID", "Product", "Total Amt");
 		System.out.printf("%-8s %-30s %10s%n","--------", "-------", "---------");
 				
 		for (int i = 0; i < orders.length; i++) {
-				//System.out.printf("%-8s %-30s %10s%n",this.orders[i][0], this.orders[i][2], this.orders[i][3]);
-				
-				}
+				System.out.println(this.orders[i].toString());
+		}
 		
 	}
 
 	@Override
-	public int saveOrders(String fileName) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int saveOrders(String fileName){
+		System.out.println("Saving Orders ...");
+		try {
+			writeFile(fileName);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		return this.index;
 	}
 
 	@Override
 	public boolean add(Order order) {
-		// TODO Auto-generated method stub
-		return false;
+		System.out.println("Adding Order ...");
+		try {
+			if(this.index >= orders.length) {
+				resize();
+			}
+			orders[this.index] = order;
+			this.index++;
+			return true;
+		}
+		catch(ArrayIndexOutOfBoundsException e){
+			return false;
+		}
 	}
 
 	@Override
 	public void add(int index, Order order) {
-		// TODO Auto-generated method stub
+		System.out.printf("Adding Order at %d ...", index);
+		try {
+			this.orders[index] = order;
+			if(this.orders[index] == null){
+				this.index++;
+			}
+
+		}
+		catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Index was out of bounds of the array");
+		}
 		
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Clearing Orders ...");
+		this.orders = new Order[25];
 	}
 
 	@Override
 	public Order get(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.println("Getting Order ...");
+		return this.orders[index];
 	}
 
 	@Override
 	public int searchByOrderID(int orderID) {
-		// TODO Auto-generated method stub
-		return 0;
+		System.out.printf("Searching for Order %d ...",orderID);
+		int ind = -1;
+		for(int i = 0; i<=this.index;i++) {
+			if(orderID == Integer.parseInt(this.orders[i].id())){
+				ind = i;
+			}
+		}
+		return ind; 
 	}
 
 	@Override
 	public Order remove(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.printf("Removing Order at %d ...",index);
+		Order temp = this.orders[index];
+		this.orders[index] = null;
+		return temp;
 	}
 
 	@Override
 	public Order set(int index, Order order) {
-		// TODO Auto-generated method stub
-		return null;
+		System.out.printf("Setting Order at index %d ...", index);
+		Order temp = this.orders[index];
+		this.orders[index] = order;
+		return temp;
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.index;
 	}
 
 	@Override
 	public int capacity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.orders.length;
 	}
 
 	@Override

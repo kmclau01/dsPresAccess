@@ -17,8 +17,28 @@ public class Order {
 		this.date = date;
 	}
 	
+	public String id() {
+		return this.id;
+	}
+	
+	public String name() {
+		return this.name;
+	}
+	
+	public String product() {
+		return this.product;
+	}
+	
+	public String amount() {
+		return this.amount;
+	}
+	
+	public String date() {
+		return this.date;
+	}
+	
 	public String toString() {
-		return String.format("%-8s %-30s %10s%n", this.id, this.product, this.amount);
+		return String.format("%-8s %-30s %10s", this.id, this.product, this.amount);
 	}
 	
 	
