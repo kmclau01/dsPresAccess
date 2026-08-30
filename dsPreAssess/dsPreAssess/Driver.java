@@ -46,7 +46,8 @@ public class Driver implements OrderDB{
 			writer.write("Order_ID,Customer_Name,Product,Total_Amount,Order_Date");
 			writer.newLine();
 		if(this.index != 0) {
-			for(int i = 0; i <= this.index; i++) {
+			for(int i = 0; i < this.index; i++) {
+				System.out.println("Saving order "+i);
 				writer.write(this.orders[i].id()+","+this.orders[i].name()+","+this.orders[i].product()+","+this.orders[i].amount()+","+this.orders[i].date());
 				writer.newLine();
 			}
@@ -61,7 +62,7 @@ public class Driver implements OrderDB{
 	
 	public int loadOrders(String fileName) {
 		//screw this method for not letting IOExceptions
-		System.out.println("Loading Orders ...");
+		System.out.println("Loading Orders from "+ fileName +" ...");
 		try {
 			readFile(fileName);	
 		} 
@@ -79,7 +80,7 @@ public class Driver implements OrderDB{
 		System.out.printf("%-8s %-30s %10s%n","Order ID", "Product", "Total Amt");
 		System.out.printf("%-8s %-30s %10s%n","--------", "-------", "---------");
 				
-		for (int i = 0; i < orders.length; i++) {
+		for (int i = 0; i < this.index; i++) {
 				System.out.println(this.orders[i].toString());
 		}
 		
@@ -87,7 +88,7 @@ public class Driver implements OrderDB{
 
 	@Override
 	public int saveOrders(String fileName){
-		System.out.println("Saving Orders ...");
+		System.out.println("Saving Orders to "+ fileName +" ...");
 		try {
 			writeFile(fileName);
 			
@@ -118,7 +119,7 @@ public class Driver implements OrderDB{
 
 	@Override
 	public void add(int index, Order order) {
-		System.out.printf("Adding Order at %d ...", index);
+		System.out.printf("Adding Order at %d ...\n", index);
 		try {
 			this.orders[index] = order;
 			if(this.orders[index] == null){
@@ -136,6 +137,7 @@ public class Driver implements OrderDB{
 	public void clear() {
 		System.out.println("Clearing Orders ...");
 		this.orders = new Order[25];
+		this.index = 0;
 	}
 
 	@Override
@@ -146,9 +148,9 @@ public class Driver implements OrderDB{
 
 	@Override
 	public int searchByOrderID(int orderID) {
-		System.out.printf("Searching for Order %d ...",orderID);
+		System.out.printf("Searching for Order %d ...\n",orderID);
 		int ind = -1;
-		for(int i = 0; i<=this.index;i++) {
+		for(int i = 0; i<this.index;i++) {
 			if(orderID == Integer.parseInt(this.orders[i].id())){
 				ind = i;
 			}
@@ -158,15 +160,16 @@ public class Driver implements OrderDB{
 
 	@Override
 	public Order remove(int index) {
-		System.out.printf("Removing Order at %d ...",index);
+		System.out.printf("Removing Order at %d ...\n",index);
 		Order temp = this.orders[index];
 		this.orders[index] = null;
+		this.index--;
 		return temp;
 	}
 
 	@Override
 	public Order set(int index, Order order) {
-		System.out.printf("Setting Order at index %d ...", index);
+		System.out.printf("Setting Order at index %d ...\n", index);
 		Order temp = this.orders[index];
 		this.orders[index] = order;
 		return temp;
@@ -184,6 +187,7 @@ public class Driver implements OrderDB{
 
 	@Override
 	public void resize() {
+		System.out.println("Resizing ...");
 		Order[] ordersNew = new Order[this.orders.length + 25];
 		
 		for(int i = 0; i < this.orders.length; i++) {
@@ -191,6 +195,7 @@ public class Driver implements OrderDB{
 		}
 		
 		this.orders = ordersNew;
+		
 		
 	}
 
